@@ -51,37 +51,50 @@ def random_pos(x_size, y_size):
     return [r.randrange(0, x_size), r.randrange(0, y_size)]
 
 
+def shares_more_than_one_pos(word_posisions, words):
+    for wrd in words:
+        count = 0
+        for wrd_pos in word_posisions:
+            for pos in wrd[1]:
+                if wrd_pos == pos:
+                    count += 1
+                    if count > 1:
+                        return True
+    return False
+    
+
 def generate_words(board, x_size, y_size):
     words = []
     for i in range(word_count):
         word_letters = []
-        while len(word_letters) < min_word_len:
-            word_letter_pos = []
-            word_letters = []
-            start_pos = random_pos(x_size, y_size)
-            direct = [0,0]
-            while direct == [0,0]:
-                direct = [r.randint(-1, 1), r.randint(-1, 1)]
-            for j in range(r.randint(min_word_len, max_word_len)):
-                if start_pos[0] + j*direct[0] < 0 or start_pos[0] + j*direct[0] >= x_size:
-                    break
-                if start_pos[1] + j*direct[1] < 0 or start_pos[1] + j*direct[1] >= x_size:
-                    break
-                word_letter_pos.append([start_pos[0] + j*direct[0], start_pos[1] + j*direct[1]])
-                word_letters.append(board[start_pos[1] + j*direct[1]][start_pos[0] + j*direct[0]])
+        word_letter_pos = []
+        shares_to_much = True
+        while shares_to_much:
+            while len(word_letters) < min_word_len:
+                word_letter_pos = []
+                word_letters = []
+                start_pos = random_pos(x_size, y_size)
+                direct = [0,0]
+                while direct == [0,0]:
+                    direct = [r.randint(-1, 1), r.randint(-1, 1)]
+                for j in range(r.randint(min_word_len, max_word_len)):
+                    if start_pos[0] + j*direct[0] < 0 or start_pos[0] + j*direct[0] >= x_size:
+                        break
+                    if start_pos[1] + j*direct[1] < 0 or start_pos[1] + j*direct[1] >= x_size:
+                        break
+                    word_letter_pos.append([start_pos[0] + j*direct[0], start_pos[1] + j*direct[1]])
+                    word_letters.append(board[start_pos[1] + j*direct[1]][start_pos[0] + j*direct[0]])
+            if not shares_more_than_one_pos(word_letter_pos, words):
+                shares_to_much = False
         words.append([word_letters, word_letter_pos])
     return words
 
 
 board = generate_rand_board(x_size, y_size)
 words = generate_words(board, x_size, y_size)
+print(words)
 print()
 print_board(board)
 print()
 print_words(words)
 print()
-
-
-
-
-
